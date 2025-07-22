@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamTV - IPTV Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <i class="fas fa-tv"></i>
+                    <span>StreamTV</span>
+                </div>
+                <div class="current-time" id="currentTime">00:00:00</div>
+            </div>
+            <div class="header-right">
+                <div class="search-container">
+                    <input type="text" placeholder="Search channels..." id="searchInput">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button class="fullscreen-btn" id="fullscreenBtn">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Video Player -->
+            <div class="video-container">
+                <div class="video-player" id="videoPlayer">
+                    <div class="video-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                        <h3>Select a channel to start watching</h3>
+                        <p>Choose from our extensive channel list</p>
+                    </div>
+                    <div class="video-overlay" id="videoOverlay">
+                        <div class="channel-info">
+                            <h2 id="currentChannel">No Channel Selected</h2>
+                            <p id="currentProgram">Select a channel to view program information</p>
+                        </div>
+                        <div class="video-controls">
+                            <button class="control-btn" id="playPauseBtn">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="control-btn" id="volumeBtn">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                            <div class="volume-slider">
+                                <input type="range" min="0" max="100" value="50" id="volumeSlider">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Sidebar -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3>CHANNELS LIST</h3>
+                    <div class="channel-count" id="channelCount">Loading...</div>
+                </div>
+                
+                <div class="category-tabs">
+                    <button class="tab-btn active" data-category="all">All</button>
+                    <button class="tab-btn" data-category="news">News</button>
+                    <button class="tab-btn" data-category="sports">Sports</button>
+                    <button class="tab-btn" data-category="entertainment">Entertainment</button>
+                    <button class="tab-btn" data-category="movies">Movies</button>
+                </div>
+
+                <div class="channels-list" id="channelsList">
+                    <!-- Channels will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading channel...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

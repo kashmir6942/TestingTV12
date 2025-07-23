@@ -337,6 +337,27 @@ function setupEventListeners() {
     
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
+    
+    // Fullscreen change event
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+}
+
+// Handle fullscreen change events
+function handleFullscreenChange() {
+    const fullscreenElement = document.fullscreenElement || 
+                             document.webkitFullscreenElement || 
+                             document.mozFullScreenElement || 
+                             document.msFullscreenElement;
+    
+    const icon = fullscreenBtn.querySelector('i');
+    if (fullscreenElement) {
+        icon.className = 'fas fa-compress';
+    } else {
+        icon.className = 'fas fa-expand';
+    }
 }
 
 // Enter application from welcome screen
@@ -345,6 +366,11 @@ function enterApplication() {
     mainApp.style.display = 'flex';
     renderChannelGroups();
     updateChannelCount();
+    
+    // Setup mobile UI after main app is shown
+    if (isMobileDevice) {
+        setupMobileUI();
+    }
 }
 
 // Test all channels functionality
@@ -716,12 +742,33 @@ function handleVolumeChange(e) {
 }
 
 function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        fullscreenBtn.querySelector('i').className = 'fas fa-compress';
+    const fullscreenElement = document.fullscreenElement || 
+                             document.webkitFullscreenElement || 
+                             document.mozFullScreenElement || 
+                             document.msFullscreenElement;
+    
+    if (!fullscreenElement) {
+        // Enter fullscreen
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        }
     } else {
-        document.exitFullscreen();
-        fullscreenBtn.querySelector('i').className = 'fas fa-expand';
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
     }
 }
 

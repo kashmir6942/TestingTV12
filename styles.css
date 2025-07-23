@@ -820,11 +820,16 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 50;
+    z-index: 150;
+    position: relative;
 }
 
 .mobile-channel-toggle:hover {
     background: linear-gradient(135deg, #5a67d8, #6b46c1);
+}
+
+.mobile-channel-toggle:active {
+    transform: scale(0.98);
 }
 
 .mobile-channel-toggle i {
@@ -844,10 +849,12 @@ body {
     z-index: 998;
     opacity: 0;
     transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .mobile-sidebar-overlay.active {
     opacity: 1;
+    pointer-events: all;
 }
 
 /* Responsive Design */

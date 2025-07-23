@@ -105,6 +105,8 @@ let isPlaying = false;
 let player = null;
 let filteredChannels = channelsData;
 let isTestingChannels = false;
+let bufferTimeout = null;
+let isMobileDevice = false;
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcomeScreen');
@@ -127,6 +129,9 @@ const testChannelsBtn = document.getElementById('testChannelsBtn');
 
 // Initialize the application
 function init() {
+    // Detect mobile device
+    isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    
     if (!shaka.Player.isBrowserSupported()) {
         alert('Shaka Player is not supported in this browser.');
         return;
@@ -138,6 +143,51 @@ function init() {
     updateDigitalClock();
     setInterval(updateDigitalClock, 1000);
     initializePlayer();
+    
+    // Apply mobile-specific UI
+    if (isMobileDevice) {
+        setupMobileUI();
+    }
+}
+
+// Setup mobile-specific UI
+function setupMobileUI() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.add('mobile-sidebar');
+    
+    // Create mobile toggle button
+    const mobileToggle = document.createElement('button');
+    mobileToggle.className = 'mobile-channel-toggle';
+    mobileToggle.innerHTML = '<i class="fas fa-list"></i> Channels';
+    mobileToggle.addEventListener('click', toggleMobileSidebar);
+    
+    // Insert after header
+    const header = document.querySelector('.header');
+    header.insertAdjacentElement('afterend', mobileToggle);
+    
+    // Add overlay for mobile sidebar
+    const overlay = document.createElement('div');
+    overlay.className = 'mobile-sidebar-overlay';
+    overlay.addEventListener('click', closeMobileSidebar);
+    document.body.appendChild(overlay);
+}
+
+// Toggle mobile sidebar
+function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.mobile-sidebar-overlay');
+    
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+}
+
+// Close mobile sidebar
+function closeMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.querySelector('.mobile-sidebar-overlay');
+    
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
 }
 
 // Move specific channels to kids category
@@ -170,6 +220,16 @@ function initializePlayer() {
     
     player.addEventListener('error', (event) => {
         console.error('Shaka Player error:', event.detail);
+        showChannelError();
+    });
+    
+    // Handle buffering events
+    player.addEventListener('buffering', (event) => {
+        if (event.buffering) {
+            startBufferTimeout();
+        } else {
+            clearBufferTimeout();
+        }
     });
     
     videoElement.addEventListener('loadstart', () => {
@@ -177,8 +237,71 @@ function initializePlayer() {
     });
     
     videoElement.addEventListener('error', () => {
-        videoPlaceholder.classList.remove('hidden');
+        showChannelError();
     });
+    
+    // Handle stalling/waiting events
+    videoElement.addEventListener('waiting', () => {
+        startBufferTimeout();
+    });
+    
+    videoElement.addEventListener('playing', () => {
+        clearBufferTimeout();
+    });
+    
+    videoElement.addEventListener('canplay', () => {
+        clearBufferTimeout();
+    });
+}
+
+// Start buffer timeout
+function startBufferTimeout() {
+    clearBufferTimeout();
+    bufferTimeout = setTimeout(() => {
+        showChannelError();
+    }, 15000); // 15 seconds
+}
+
+// Clear buffer timeout
+function clearBufferTimeout() {
+    if (bufferTimeout) {
+        clearTimeout(bufferTimeout);
+        bufferTimeout = null;
+    }
+}
+
+// Show channel error
+function showChannelError() {
+    clearBufferTimeout();
+    
+    // Show placeholder with error message
+    videoPlaceholder.classList.remove('hidden');
+    const placeholderContent = videoPlaceholder.querySelector('.placeholder-content');
+    placeholderContent.innerHTML = `
+        <i class="fas fa-exclamation-triangle" style="color: #3498db;"></i>
+        <h3 style="color: #3498db;">Channel Error!</h3>
+        <p>Please switch channels or check your internet connection</p>
+        <div class="placeholder-features">
+            <span><i class="fas fa-wifi"></i> Check Connection</span>
+            <span><i class="fas fa-tv"></i> Try Another Channel</span>
+            <span><i class="fas fa-refresh"></i> Refresh Page</span>
+        </div>
+    `;
+    
+    // Update current channel info
+    if (currentChannel) {
+        currentChannelElement.textContent = `${currentChannel.name} - Connection Error`;
+        currentProgramElement.textContent = 'Channel temporarily unavailable';
+        
+        // Update channel status
+        currentChannel.status = 'offline';
+        updateChannelStatus(currentChannel);
+    }
+    
+    // Stop video
+    videoElement.pause();
+    isPlaying = false;
+    updatePlayPauseButton();
 }
 
 // Update digital clock (12-hour format)
@@ -508,6 +631,11 @@ async function selectChannel(channel, channelElement) {
         channel.status = 'online';
         updateChannelStatus(channel);
         
+        // Close mobile sidebar if open
+        if (isMobileDevice) {
+            closeMobileSidebar();
+        }
+        
     } catch (error) {
         console.error('Failed to load channel:', error);
         
@@ -518,8 +646,8 @@ async function selectChannel(channel, channelElement) {
         // Show placeholder
         videoPlaceholder.classList.remove('hidden');
         
-        // Show error message
-        showErrorMessage(`Failed to load ${channel.name}. The stream may be offline.`);
+        // Show channel error
+        showChannelError();
     }
     
     hideLoading();

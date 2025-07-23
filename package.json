@@ -1,0 +1,17 @@
+{
+  "name": "modern-iptv-app",
+  "version": "1.0.0",
+  "description": "Modern IPTV streaming application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve . -p 3000",
+    "start": "npx serve . -p 3000",
+    "build": "echo 'No build process needed for static files'"
+  },
+  "keywords": ["iptv", "streaming", "tv", "channels"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

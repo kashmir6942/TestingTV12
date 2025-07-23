@@ -347,37 +347,115 @@ body {
     color: rgba(255, 255, 255, 0.6);
     font-size: 14px;
     font-weight: 400;
+    margin-bottom: 16px;
+}
+
+.test-channels-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+}
+
+.test-channels-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.test-channels-btn:active {
+    transform: translateY(0);
+}
+
+.test-channels-btn.testing {
+    background: linear-gradient(135deg, #ffa502, #ff6348);
+    pointer-events: none;
+}
+
+.test-channels-btn.testing i {
+    animation: spin 1s linear infinite;
 }
 
 .channel-groups {
     flex: 1;
     overflow-y: auto;
     padding: 16px;
+    scroll-behavior: smooth;
+}
+
+.channel-groups::-webkit-scrollbar {
+    width: 8px;
+}
+
+.channel-groups::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin: 8px;
+}
+
+.channel-groups::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.channel-groups::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a67d8, #6b46c1);
 }
 
 .channel-group {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.channel-group:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
 }
 
 .group-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
+    padding: 16px 20px;
+    background: transparent;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-bottom: 8px;
+    position: relative;
 }
 
 .group-header:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .group-header.active {
-    background: rgba(255, 107, 107, 0.15);
-    border: 1px solid rgba(255, 107, 107, 0.3);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+}
+
+.group-header.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 0 2px 2px 0;
 }
 
 .group-title {
@@ -387,83 +465,103 @@ body {
 }
 
 .group-icon {
-    width: 32px;
-    height: 32px;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
-    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 16px;
     color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 .group-name {
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 16px;
     color: #ffffff;
 }
 
 .group-count {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
-    padding: 4px 8px;
-    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
+    border: 1px solid rgba(102, 126, 234, 0.3);
 }
 
 .group-arrow {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
     transition: transform 0.3s ease;
+    font-size: 14px;
 }
 
 .group-header.active .group-arrow {
     transform: rotate(90deg);
+    color: #667eea;
 }
 
 .channels-list {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
+    background: rgba(0, 0, 0, 0.1);
 }
 
 .channels-list.expanded {
-    max-height: 400px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.channels-list.expanded::-webkit-scrollbar {
+    width: 4px;
+}
+
+.channels-list.expanded::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.channels-list.expanded::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5);
+    border-radius: 2px;
 }
 
 .channel-item {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
-    margin: 4px 0;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 8px;
+    padding: 12px 20px;
+    margin: 0;
+    background: transparent;
     cursor: pointer;
     transition: all 0.3s ease;
-    border-left: 3px solid transparent;
+    border-left: 4px solid transparent;
+    position: relative;
 }
 
 .channel-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-left-color: #ff6b6b;
-    transform: translateX(4px);
+    background: rgba(255, 255, 255, 0.05);
+    border-left-color: #667eea;
 }
 
 .channel-item.active {
-    background: rgba(255, 107, 107, 0.15);
-    border-left-color: #ff6b6b;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.15), transparent);
+    border-left-color: #667eea;
 }
 
 .channel-number {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
-    padding: 4px 8px;
-    border-radius: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
     margin-right: 12px;
-    min-width: 32px;
+    min-width: 36px;
     text-align: center;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .channel-info-item {
@@ -471,7 +569,7 @@ body {
 }
 
 .channel-name {
-    font-weight: 500;
+    font-weight: 600;
     font-size: 14px;
     color: #ffffff;
     margin-bottom: 2px;
@@ -483,8 +581,8 @@ body {
 }
 
 .channel-status {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
     margin-left: 12px;
@@ -709,25 +807,6 @@ body {
     font-weight: 500;
 }
 
-/* Scrollbar Styling */
-.channel-groups::-webkit-scrollbar {
-    width: 6px;
-}
-
-.channel-groups::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-}
-
-.channel-groups::-webkit-scrollbar-thumb {
-    background: rgba(255, 107, 107, 0.5);
-    border-radius: 3px;
-}
-
-.channel-groups::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 107, 107, 0.7);
-}
-
 /* Responsive Design */
 @media (max-width: 1024px) {
     .sidebar {
@@ -736,6 +815,16 @@ body {
     
     .header-center {
         margin: 0 20px;
+    }
+    
+    .group-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    .group-name {
+        font-size: 15px;
     }
 }
 
@@ -749,13 +838,15 @@ body {
     }
     
     .sidebar {
-        width: 100%;
+        width: 320px;
         position: fixed;
         top: 0;
         left: -100%;
         height: 100vh;
         z-index: 999;
         transition: left 0.3s ease;
+        background: rgba(10, 10, 10, 0.98);
+        backdrop-filter: blur(20px);
     }
     
     .sidebar.open {
@@ -768,6 +859,32 @@ body {
     
     .digital-clock .time {
         font-size: 16px;
+    }
+    
+    .channel-groups {
+        padding: 12px;
+    }
+    
+    .channel-group {
+        margin-bottom: 12px;
+    }
+    
+    .group-header {
+        padding: 14px 16px;
+    }
+    
+    .group-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+    
+    .group-name {
+        font-size: 14px;
+    }
+    
+    .channel-item {
+        padding: 10px 16px;
     }
 }
 
@@ -796,5 +913,80 @@ body {
     .search-container input {
         font-size: 14px;
         padding: 12px 16px 12px 40px;
+    }
+    
+    .sidebar {
+        width: 100%;
+    }
+    
+    .test-channels-btn {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+    
+    .group-header {
+        padding: 12px 14px;
+    }
+    
+    .channel-item {
+        padding: 8px 14px;
+    }
+    
+    .channel-number {
+        padding: 4px 8px;
+        min-width: 30px;
+        font-size: 11px;
+    }
+    
+    .channel-name {
+        font-size: 13px;
+    }
+    
+    .channel-program {
+        font-size: 11px;
+    }
+}
+
+/* Android TV Optimization */
+@media (min-width: 1920px) {
+    .sidebar {
+        width: 400px;
+    }
+    
+    .group-header {
+        padding: 20px 24px;
+    }
+    
+    .group-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+    
+    .group-name {
+        font-size: 18px;
+    }
+    
+    .channel-item {
+        padding: 16px 24px;
+    }
+    
+    .channel-number {
+        padding: 8px 12px;
+        min-width: 40px;
+        font-size: 14px;
+    }
+    
+    .channel-name {
+        font-size: 16px;
+    }
+    
+    .channel-program {
+        font-size: 14px;
+    }
+    
+    .test-channels-btn {
+        padding: 16px 20px;
+        font-size: 16px;
     }
 }

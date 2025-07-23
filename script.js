@@ -88,6 +88,11 @@ const channelGroups = {
         icon: "fas fa-futbol",
         channels: []
     },
+    kids: {
+        name: "Kids & Family",
+        icon: "fas fa-child",
+        channels: []
+    },
     entertainment: {
         name: "Entertainment & Lifestyle",
         icon: "fas fa-star",
@@ -99,6 +104,7 @@ let currentChannel = null;
 let isPlaying = false;
 let player = null;
 let filteredChannels = channelsData;
+let isTestingChannels = false;
 
 // DOM Elements
 const welcomeScreen = document.getElementById('welcomeScreen');
@@ -117,6 +123,7 @@ const loadingOverlay = document.getElementById('loadingOverlay');
 const digitalClock = document.getElementById('digitalClock');
 const videoElement = document.getElementById('video');
 const videoPlaceholder = document.getElementById('videoPlaceholder');
+const testChannelsBtn = document.getElementById('testChannelsBtn');
 
 // Initialize the application
 function init() {
@@ -125,11 +132,21 @@ function init() {
         return;
     }
     
+    moveChannelsToKidsCategory();
     organizeChannelsByGroups();
     setupEventListeners();
     updateDigitalClock();
     setInterval(updateDigitalClock, 1000);
     initializePlayer();
+}
+
+// Move specific channels to kids category
+function moveChannelsToKidsCategory() {
+    channelsData.forEach(channel => {
+        if (channel.name === 'CBeebies' || channel.name === 'Cartoon Network' || channel.name === 'Moonbug Kids') {
+            channel.category = 'kids';
+        }
+    });
 }
 
 // Organize channels by groups
@@ -192,6 +209,9 @@ function setupEventListeners() {
     volumeSlider.addEventListener('input', handleVolumeChange);
     fullscreenBtn.addEventListener('click', toggleFullscreen);
     
+    // Test channels button
+    testChannelsBtn.addEventListener('click', testAllChannels);
+    
     // Keyboard shortcuts
     document.addEventListener('keydown', handleKeyboardShortcuts);
 }
@@ -204,6 +224,101 @@ function enterApplication() {
     updateChannelCount();
 }
 
+// Test all channels functionality
+async function testAllChannels() {
+    if (isTestingChannels) return;
+    
+    isTestingChannels = true;
+    testChannelsBtn.classList.add('testing');
+    testChannelsBtn.innerHTML = '<i class="fas fa-spinner"></i> Testing Channels...';
+    
+    let onlineCount = 0;
+    let offlineCount = 0;
+    
+    for (let i = 0; i < channelsData.length; i++) {
+        const channel = channelsData[i];
+        channel.status = 'testing';
+        updateChannelStatus(channel);
+        
+        try {
+            // Create a temporary player for testing
+            const testPlayer = new shaka.Player();
+            testPlayer.configure({
+                drm: {
+                    clearKeys: channel.drm
+                }
+            });
+            
+            // Try to load the stream with a timeout
+            const loadPromise = testPlayer.load(channel.url);
+            const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Timeout')), 5000)
+            );
+            
+            await Promise.race([loadPromise, timeoutPromise]);
+            
+            channel.status = 'online';
+            onlineCount++;
+            testPlayer.destroy();
+            
+        } catch (error) {
+            channel.status = 'offline';
+            offlineCount++;
+        }
+        
+        updateChannelStatus(channel);
+        
+        // Update button text with progress
+        const progress = Math.round(((i + 1) / channelsData.length) * 100);
+        testChannelsBtn.innerHTML = `<i class="fas fa-spinner"></i> Testing... ${progress}%`;
+    }
+    
+    // Reset button
+    isTestingChannels = false;
+    testChannelsBtn.classList.remove('testing');
+    testChannelsBtn.innerHTML = '<i class="fas fa-check-circle"></i> Test Complete';
+    
+    setTimeout(() => {
+        testChannelsBtn.innerHTML = '<i class="fas fa-play-circle"></i> Test All Channels';
+    }, 3000);
+    
+    showTestResults(onlineCount, offlineCount);
+}
+
+// Show test results
+function showTestResults(online, offline) {
+    const total = online + offline;
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 20px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        z-index: 3000;
+        backdrop-filter: blur(10px);
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        max-width: 300px;
+    `;
+    toast.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 8px;">Channel Test Complete</div>
+        <div style="font-size: 12px; opacity: 0.9;">
+            Total: ${total} channels<br>
+            <span style="color: #2ed573;">Online: ${online}</span> • 
+            <span style="color: #ff4757;">Offline: ${offline}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 5000);
+}
 // Render channel groups
 function renderChannelGroups() {
     channelGroups_element.innerHTML = '';

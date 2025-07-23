@@ -3,85 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamTV - IPTV Platform</title>
+    <title>StreamTV - Modern IPTV Platform</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/shaka-player@4.3.6/dist/shaka-player.compiled.js"></script>
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header-left">
-                <div class="logo">
-                    <i class="fas fa-tv"></i>
-                    <span>StreamTV</span>
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="welcome-content">
+                <div class="welcome-logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-tv"></i>
+                    </div>
+                    <h1>StreamTV</h1>
+                    <p>Your Premium IPTV Experience</p>
                 </div>
-                <div class="current-time" id="currentTime">00:00:00</div>
-            </div>
-            <div class="header-right">
-                <div class="search-container">
-                    <input type="text" placeholder="Search channels..." id="searchInput">
-                    <i class="fas fa-search"></i>
+                <div class="welcome-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="totalChannels">66</span>
+                        <span class="stat-label">Channels</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">4K</span>
+                        <span class="stat-label">Quality</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Streaming</span>
+                    </div>
                 </div>
-                <button class="fullscreen-btn" id="fullscreenBtn">
-                    <i class="fas fa-expand"></i>
+                <button class="enter-btn" id="enterBtn">
+                    <span>Enter Platform</span>
+                    <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
-        </header>
+            <div class="welcome-bg">
+                <div class="bg-gradient"></div>
+                <div class="floating-elements">
+                    <div class="floating-element"></div>
+                    <div class="floating-element"></div>
+                    <div class="floating-element"></div>
+                </div>
+            </div>
+        </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Video Player -->
-            <div class="video-container">
-                <div class="video-player" id="videoPlayer">
-                    <video id="video" controls style="width: 100%; height: 100%; background: #000;"></video>
-                    <div class="video-placeholder" id="videoPlaceholder">
-                        <i class="fas fa-play-circle"></i>
-                        <h3>Select a channel to start watching</h3>
-                        <p>Choose from our extensive channel list</p>
+        <!-- Main Application -->
+        <div class="main-app" id="mainApp" style="display: none;">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="logo">
+                        <i class="fas fa-tv"></i>
+                        <span>StreamTV</span>
                     </div>
-                    <div class="video-overlay" id="videoOverlay">
-                        <div class="channel-info">
-                            <h2 id="currentChannel">No Channel Selected</h2>
-                            <p id="currentProgram">Select a channel to view program information</p>
+                </div>
+                <div class="header-center">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search channels, shows..." id="searchInput">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="digital-clock" id="digitalClock">
+                        <span class="time">12:00</span>
+                        <span class="period">PM</span>
+                    </div>
+                    <button class="fullscreen-btn" id="fullscreenBtn">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Channel Groups Sidebar -->
+                <div class="sidebar" id="sidebar">
+                    <div class="sidebar-header">
+                        <h3>Channel Groups</h3>
+                        <div class="channel-count" id="channelCount">Loading...</div>
+                    </div>
+                    
+                    <div class="channel-groups" id="channelGroups">
+                        <!-- Groups will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Video Player -->
+                <div class="video-container">
+                    <div class="video-player" id="videoPlayer">
+                        <video id="video" controls style="width: 100%; height: 100%; background: #000;"></video>
+                        <div class="video-placeholder" id="videoPlaceholder">
+                            <div class="placeholder-content">
+                                <i class="fas fa-play-circle"></i>
+                                <h3>Welcome to StreamTV</h3>
+                                <p>Select a channel from the groups to start watching</p>
+                                <div class="placeholder-features">
+                                    <span><i class="fas fa-hd-video"></i> HD Quality</span>
+                                    <span><i class="fas fa-signal"></i> Live Streaming</span>
+                                    <span><i class="fas fa-globe"></i> Global Channels</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="video-controls">
-                            <button class="control-btn" id="playPauseBtn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button class="control-btn" id="volumeBtn">
-                                <i class="fas fa-volume-up"></i>
-                            </button>
-                            <div class="volume-slider">
-                                <input type="range" min="0" max="100" value="50" id="volumeSlider">
+                        <div class="video-overlay" id="videoOverlay">
+                            <div class="channel-info">
+                                <h2 id="currentChannel">No Channel Selected</h2>
+                                <p id="currentProgram">Select a channel to view program information</p>
+                            </div>
+                            <div class="video-controls">
+                                <button class="control-btn" id="playPauseBtn">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button class="control-btn" id="volumeBtn">
+                                    <i class="fas fa-volume-up"></i>
+                                </button>
+                                <div class="volume-slider">
+                                    <input type="range" min="0" max="100" value="50" id="volumeSlider">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Channel Sidebar -->
-            <div class="sidebar">
-                <div class="sidebar-header">
-                    <h3>CHANNELS LIST</h3>
-                    <div class="channel-count" id="channelCount">Loading...</div>
-                    <button class="test-all-btn" id="testAllBtn">
-                        <i class="fas fa-check-circle"></i>
-                        Test All Channels
-                    </button>
-                </div>
-                
-                <div class="category-tabs">
-                    <button class="tab-btn active" data-category="all">All</button>
-                    <button class="tab-btn" data-category="news">News</button>
-                    <button class="tab-btn" data-category="sports">Sports</button>
-                    <button class="tab-btn" data-category="entertainment">Entertainment</button>
-                    <button class="tab-btn" data-category="movies">Movies</button>
-                </div>
-
-                <div class="channels-list" id="channelsList">
-                    <!-- Channels will be populated by JavaScript -->
                 </div>
             </div>
         </div>
@@ -89,7 +132,7 @@
         <!-- Loading Overlay -->
         <div class="loading-overlay" id="loadingOverlay">
             <div class="loading-spinner">
-                <i class="fas fa-spinner fa-spin"></i>
+                <div class="spinner"></div>
                 <p>Loading channel...</p>
             </div>
         </div>
